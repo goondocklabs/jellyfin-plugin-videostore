@@ -11,7 +11,7 @@
       {
         "version": "0.1.0.1",
         "changelog": "0.1.0.1: built for Jellyfin 12.2 (fixes Restock failing with a MissingMethodException). 0.1.0.0: first release. Four shelves as collections with their own cover art: Staff Picks (a theme of the week, with shelf cards written by Claude if you add an Anthropic key), New Releases (daily), Hidden Gems and Last Copy (weekly). Restocks every morning at 4:10, or with the Restock button.",
-        "targetAbi": "12.2.0.0",
+        "targetAbi": "10.11.0.0",
         "sourceUrl": "https://github.com/goondocklabs/jellyfin-plugin-videostore/releases/download/v0.1.0.1/video-store_0.1.0.1.zip",
         "checksum": "f84437ab03fe63e5e0264357b19e437e",
         "timestamp": "2026-10-17T18:03:16Z"
