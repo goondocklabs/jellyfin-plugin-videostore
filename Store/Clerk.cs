@@ -173,7 +173,7 @@ public sealed class Clerk
     private HashSet<Guid> Watched()
     {
         var seen = new HashSet<Guid>();
-        foreach (var user in _users.Users)
+        foreach (var user in _users.GetUsers())
         {
             var played = _library.GetItemList(new InternalItemsQuery(user)
             {
