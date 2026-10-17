@@ -1,0 +1,12 @@
+[
+  {
+    "guid": "22636043-47a7-4333-9892-a91ecb14861e",
+    "name": "Video Store",
+    "description": "Rotating video store shelves built from your own library: Staff Picks, New Releases, Hidden Gems and Last Copy, as collections in every Jellyfin app.",
+    "overview": "Your library, restocked every week.",
+    "owner": "goondocklabs",
+    "category": "General",
+    "imageUrl": "https://raw.githubusercontent.com/goondocklabs/jellyfin-plugin-videostore/main/logo.png",
+    "versions": []
+  }
+]
