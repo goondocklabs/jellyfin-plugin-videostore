@@ -18,6 +18,11 @@ jobs:
             10.0.x
       - name: Jellyfin package versions
         run: curl -s https://api.nuget.org/v3-flatcontainer/jellyfin.controller/index.json | tr -d '\n ' | tail -c 400 | sed 's/^/::warning::versions /'
+      - name: IUserManager members
+        run: |
+          curl -sL https://api.nuget.org/v3-flatcontainer/jellyfin.controller/12.2.0/jellyfin.controller.12.2.0.nupkg -o c.nupkg && mkdir -p c && cd c && unzip -oq ../c.nupkg
+          grep -oE 'name="[A-Z]:MediaBrowser.Controller.Library.IUserManager[^"]*"' -r . | sed 's/.*IUserManager\.//' | sort -u | tr '\n' ' ' | fold -w 900 | sed 's/^/::warning::um /'
+          grep -oE 'name="[A-Z]:MediaBrowser.Controller.Entities.InternalItemsQuery\.#ctor[^"]*"' -r . | sort -u | sed 's/^/::warning::q /'
       - name: Build
         run: |
           set -o pipefail
