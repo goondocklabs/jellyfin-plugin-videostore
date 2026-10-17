@@ -10,7 +10,7 @@
   "timestamp": "2026-10-17T00:00:00.0000000Z",
   "version": "0.1.0.1",
   "status": "Active",
-  "autoUpdate": false,
+  "autoUpdate": true,
   "assemblies": [],
   "imagePath": "logo.png"
 }
