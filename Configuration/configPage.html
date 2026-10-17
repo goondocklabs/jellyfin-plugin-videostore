@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Video Store</title>
+</head>
+<body>
+    <div id="VideoStoreConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-checkbox">
+        <div data-role="content">
+            <div class="content-primary">
+                <h1>📼 Video Store</h1>
+                <p>Rotating shelves built from your own library. Each shelf is a collection, so it shows up in every Jellyfin app, Apple TV and Roku included.</p>
+                <ul>
+                    <li><b>Staff Picks</b>: a theme of the week with hand-written style cards (uses Claude if you add a key below; otherwise a genre of the week)</li>
+                    <li><b>New Releases</b>: the latest additions, updated daily</li>
+                    <li><b>Hidden Gems</b>: well rated, and nobody in the house has watched them</li>
+                    <li><b>Last Copy</b>: the titles that have sat unwatched the longest</li>
+                </ul>
+
+                <p>
+                    <button is="emby-button" type="button" id="VsRestock" class="raised button-submit emby-button"><span>Restock all shelves now</span></button>
+                    <span id="VsStatus" style="margin-left:1em;opacity:.8;"></span>
+                </p>
+
+                <form id="VideoStoreForm">
+                    <h2>Shelves</h2>
+                    <div class="checkboxContainer"><label><input is="emby-checkbox" type="checkbox" id="StaffPicks" /><span>Staff Picks</span></label></div>
+                    <div class="checkboxContainer"><label><input is="emby-checkbox" type="checkbox" id="NewReleases" /><span>New Releases</span></label></div>
+                    <div class="checkboxContainer"><label><input is="emby-checkbox" type="checkbox" id="HiddenGems" /><span>Hidden Gems</span></label></div>
+                    <div class="checkboxContainer"><label><input is="emby-checkbox" type="checkbox" id="LastCopy" /><span>Last Copy</span></label></div>
+                    <div class="inputContainer"><input is="emby-input" type="number" id="PerShelf" min="3" max="40" label="Titles per shelf" /></div>
+                    <div class="checkboxContainer"><label><input is="emby-checkbox" type="checkbox" id="IncludeMovies" /><span>Stock movies</span></label></div>
+                    <div class="checkboxContainer"><label><input is="emby-checkbox" type="checkbox" id="IncludeShows" /><span>Stock TV shows</span></label></div>
+                    <div class="inputContainer"><input is="emby-input" type="number" id="HiddenGemMinRating" min="0" max="10" step="0.1" label="Hidden Gems: lowest rating (out of 10)" /></div>
+                    <div class="inputContainer"><input is="emby-input" type="number" id="RestockDays" min="1" max="60" label="Restock the weekly shelves every (days)" /></div>
+
+                    <h2>Staff Picks with Claude</h2>
+                    <p>Add an Anthropic API key and the clerk picks a theme each week and writes a little card for every title. Costs well under a cent a week.</p>
+                    <div class="inputContainer"><input is="emby-input" type="password" id="AnthropicApiKey" label="Anthropic API key" autocomplete="off" /></div>
+                    <div class="inputContainer"><input is="emby-input" type="text" id="Model" label="Model" /></div>
+
+                    <button is="emby-button" type="submit" class="raised button-submit block emby-button"><span>Save</span></button>
+                </form>
+            </div>
+        </div>
+        <script type="text/javascript">
+            (function () {
+                var pluginId = '22636043-47a7-4333-9892-a91ecb14861e';
+                var page = document.querySelector('#VideoStoreConfigPage');
+                function $(s) { return page.querySelector(s); }
+                var checks = ['StaffPicks', 'NewReleases', 'HiddenGems', 'LastCopy', 'IncludeMovies', 'IncludeShows'];
+
+                page.addEventListener('pageshow', function () {
+                    Dashboard.showLoadingMsg();
+                    ApiClient.getPluginConfiguration(pluginId).then(function (c) {
+                        checks.forEach(function (k) { $('#' + k).checked = c[k] !== false; });
+                        $('#PerShelf').value = c.PerShelf || 12;
+                        $('#HiddenGemMinRating').value = c.HiddenGemMinRating == null ? 7 : c.HiddenGemMinRating;
+                        $('#RestockDays').value = c.RestockDays || 7;
+                        $('#AnthropicApiKey').value = c.AnthropicApiKey || '';
+                        $('#Model').value = c.Model || 'claude-haiku-5-5';
+                        Dashboard.hideLoadingMsg();
+                    });
+                });
+
+                $('#VideoStoreForm').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    Dashboard.showLoadingMsg();
+                    ApiClient.getPluginConfiguration(pluginId).then(function (c) {
+                        checks.forEach(function (k) { c[k] = $('#' + k).checked; });
+                        c.PerShelf = parseInt($('#PerShelf').value, 10) || 12;
+                        var r = parseFloat($('#HiddenGemMinRating').value);
+                        c.HiddenGemMinRating = isNaN(r) ? 7 : r;
+                        c.RestockDays = parseInt($('#RestockDays').value, 10) || 7;
+                        c.AnthropicApiKey = $('#AnthropicApiKey').value.trim();
+                        c.Model = $('#Model').value.trim() || 'claude-haiku-5-5';
+                        ApiClient.updatePluginConfiguration(pluginId, c).then(function (result) {
+                            Dashboard.processPluginConfigurationUpdateResult(result);
+                        });
+                    });
+                    return false;
+                });
+
+                $('#VsRestock').addEventListener('click', function () {
+                    var btn = this;
+                    btn.disabled = true;
+                    $('#VsStatus').textContent = 'Restocking… (Staff Picks can take a minute)';
+                    ApiClient.fetch({ url: ApiClient.getUrl('VideoStore/Restock', { all: true }), type: 'POST', dataType: 'json' }).then(function (res) {
+                        btn.disabled = false;
+                        $('#VsStatus').textContent = (res && res.report ? res.report.join(' · ') : 'Done');
+                    }, function () {
+                        btn.disabled = false;
+                        $('#VsStatus').textContent = 'Something went wrong; check the Jellyfin log for "Video Store".';
+                    });
+                });
+            })();
+        </script>
+    </div>
+</body>
+</html>

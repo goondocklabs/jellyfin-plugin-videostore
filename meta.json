@@ -1,0 +1,16 @@
+{
+  "category": "General",
+  "changelog": "0.1.0.0: first release. Four shelves as collections with their own cover art: Staff Picks (a theme of the week, with shelf cards written by Claude if you add an Anthropic key), New Releases (daily), Hidden Gems and Last Copy (weekly). Restocks every morning at 4:10, or with the Restock button.",
+  "description": "Rotating video store shelves built from your own library: Staff Picks, New Releases, Hidden Gems and Last Copy, as collections in every Jellyfin app.",
+  "guid": "22636043-47a7-4333-9892-a91ecb14861e",
+  "name": "Video Store",
+  "overview": "Your library, restocked every week.",
+  "owner": "goondocklabs",
+  "targetAbi": "10.11.0.0",
+  "timestamp": "2026-10-17T00:00:00.0000000Z",
+  "version": "0.1.0.0",
+  "status": "Active",
+  "autoUpdate": false,
+  "assemblies": [],
+  "imagePath": "logo.png"
+}
